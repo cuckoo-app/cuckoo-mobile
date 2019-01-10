@@ -12,14 +12,14 @@ import Row from './components/Row';
 import Header from './components/Header';
 import SectionHeader from './components/SectionHeader';
 import Footer from './components/Footer';
-// import demoData from './data';
+import demoData from './data';
 
 
 class ListViewDemo extends Component {
   constructor(props) {
     super(props)
 
-    this.demoData = []
+    this.demoData = demoData
 
     const getSectionData = (dataBlob, sectionId) => dataBlob[sectionId];
     const getRowData = (dataBlob, sectionId, rowId) => dataBlob[rowId];
@@ -37,53 +37,53 @@ class ListViewDemo extends Component {
     }
   }
 
-  renderData() {
-    const getSectionData = (dataBlob, sectionId) => dataBlob[sectionId];
-    const getRowData = (dataBlob, sectionId, rowId) => dataBlob[rowId];
-
-    const ds = new ListView.DataSource({
-      rowHasChanged: (r1, r2) => r1 !== r2,
-      sectionHeaderHasChanged : (s1, s2) => s1 !== s2,
-      getSectionData,
-      getRowData,
-    });
-
-    const { dataBlob, sectionIds, rowIds } = this.formatData(this.demoData);
-    this.setState({
-      dataSource: ds.cloneWithRowsAndSections(dataBlob, sectionIds, rowIds)
-    })
-  }
-
-  async getJobs() {
-    let demoData = []
-    let url = 'http://127.0.0.1:8000/api/jobs/';
-    let username = 'bryan';
-    let password = 'password';
-
-    let headers = new Headers();
-
-    //headers.append('Content-Type', 'text/json');
-    const Buffer = require("buffer").Buffer;
-    let encodedAuth = username + ":" + password
-    encodedAuth = new Buffer(encodedAuth).toString("base64")
-    headers.append('Authorization', 'Basic ' + encodedAuth);
-
-    fetch(url, {method:'GET',
-            headers: headers,
-            //credentials: 'user:passwd'
-           })
-    .then(response => response.json())
-    .then(json => {
-      this.demoData = json;
-      // console.log(this.demoData);
-    });
-
-    this.renderData()
-  }
-
-  componentDidMount() {
-    this.timer = setInterval(() => this.getJobs(), 1000)
-  }
+  // renderData() {
+  //   const getSectionData = (dataBlob, sectionId) => dataBlob[sectionId];
+  //   const getRowData = (dataBlob, sectionId, rowId) => dataBlob[rowId];
+  //
+  //   const ds = new ListView.DataSource({
+  //     rowHasChanged: (r1, r2) => r1 !== r2,
+  //     sectionHeaderHasChanged : (s1, s2) => s1 !== s2,
+  //     getSectionData,
+  //     getRowData,
+  //   });
+  //
+  //   const { dataBlob, sectionIds, rowIds } = this.formatData(this.demoData);
+  //   this.setState({
+  //     dataSource: ds.cloneWithRowsAndSections(dataBlob, sectionIds, rowIds)
+  //   })
+  // }
+  //
+  // async getJobs() {
+  //   let demoData = []
+  //   let url = 'http://localhost:8000/api/jobs/';
+  //   let username = 'bryan';
+  //   let password = 'password';
+  //
+  //   let headers = new Headers();
+  //
+  //   //headers.append('Content-Type', 'text/json');
+  //   const Buffer = require("buffer").Buffer;
+  //   let encodedAuth = username + ":" + password
+  //   encodedAuth = new Buffer(encodedAuth).toString("base64")
+  //   headers.append('Authorization', 'Basic ' + encodedAuth);
+  //
+  //   fetch(url, {method:'GET',
+  //           headers: headers,
+  //           //credentials: 'user:passwd'
+  //          })
+  //   .then(response => response.json())
+  //   .then(json => {
+  //     this.demoData = json;
+  //     console.log(this.demoData);
+  //   });
+  //
+  //   this.renderData()
+  // }
+  //
+  // componentDidMount() {
+  //   this.timer = setInterval(() => this.getJobs(), 1000)
+  // }
 
   formatData(data) {
     const status_names = {
