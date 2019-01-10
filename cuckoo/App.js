@@ -3,10 +3,14 @@ import React, { Component } from 'react';
 import {
   AppRegistry,
   StyleSheet,
-  ListView,
+  SectionList,
   Text,
-  View
+  View,
+  Picker
 } from 'react-native';
+import { SafeAreaView } from 'react-navigation'
+import { YellowBox } from 'react-native';
+YellowBox.ignoreWarnings(['Remote debugger']);
 
 import Row from './components/Row';
 import Header from './components/Header';
@@ -15,25 +19,15 @@ import Footer from './components/Footer';
 import demoData from './data';
 
 
-class ListViewDemo extends Component {
+class JobView extends Component {
   constructor(props) {
     super(props)
 
     this.demoData = demoData
 
-    const getSectionData = (dataBlob, sectionId) => dataBlob[sectionId];
-    const getRowData = (dataBlob, sectionId, rowId) => dataBlob[rowId];
-
-    const ds = new ListView.DataSource({
-      rowHasChanged: (r1, r2) => r1 !== r2,
-      sectionHeaderHasChanged : (s1, s2) => s1 !== s2,
-      getSectionData,
-      getRowData,
-    });
-
-    const { dataBlob, sectionIds, rowIds } = this.formatData(this.demoData);
+    const formattedData = this.formatData(this.demoData);
     this.state = {
-      dataSource: ds.cloneWithRowsAndSections(dataBlob, sectionIds, rowIds)
+      data: formattedData
     }
   }
 
@@ -95,9 +89,7 @@ class ListViewDemo extends Component {
     const statuses = ['RU', 'SU', 'ER', 'CR'];
 
     // Need somewhere to store our data
-    const dataBlob = {};
-    const sectionIds = [];
-    const rowIds = [];
+    const formattedData = [];
 
     // Each section is going to represent a letter in the alphabet so we loop over the alphabet
     for (let sectionId = 0; sectionId < statuses.length; sectionId++) {
@@ -110,47 +102,35 @@ class ListViewDemo extends Component {
       // If there are any users who have a first name starting with the current letter then we'll
       // add a new section otherwise we just skip over it
       if (jobs.length > 0) {
-        // Add a section id to our array so the listview knows that we've got a new section
-        sectionIds.push(sectionId);
 
         // Store any data we would want to display in the section header. In our case we want to show
         // the current character
-        dataBlob[sectionId] = { status: status_names[currentStatus] };
-
-        // Setup a new array that we can store the row ids for this section
-        rowIds.push([]);
-
-        // Loop over the valid users for this section
-        for (let i = 0; i < jobs.length; i++) {
-          // Create a unique row id for the data blob that the listview can use for reference
-          const rowId = `${sectionId}:${i}`;
-
-          // Push the row id to the row ids array. This is what listview will reference to pull
-          // data from our data blob
-          rowIds[rowIds.length - 1].push(rowId);
-
-          // Store the data we care about for this row
-          dataBlob[rowId] = jobs[i];
-        }
+        formattedData.push({
+          title: status_names[currentStatus],
+          data: jobs,
+        });
       }
     }
-    console.log(dataBlob)
-    return { dataBlob, sectionIds, rowIds };
+    console.log(formattedData)
+    return formattedData;
   }
 
   render() {
     return (
-      <View style={styles.container}>
-        <ListView
-          style={styles.container}
-          dataSource={this.state.dataSource}
-          renderRow={(data) => <Row {...data} />}
-          renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
-          renderHeader={() => <Header />}
-          renderFooter={() => <Footer />}
-          renderSectionHeader={(sectionData) => <SectionHeader {...sectionData} />}
-        />
-      </View>
+      <React.Fragment>
+        <SafeAreaView style={styles.container}>
+          <SectionList style={styles.list}
+            sections={this.state.data}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({item}) => <Row {...item} />}
+            renderSectionHeader={({section: {title}}) => (
+              <Text style={styles.header}>{title}</Text>
+            )}
+            SectionSeparatorComponent={() => <View style={styles.thick_separator} />}
+            ItemSeparatorComponent={() => <View style={styles.separator} />}
+          />
+        </SafeAreaView>
+      </React.Fragment>
     );
   }
 }
@@ -158,15 +138,29 @@ class ListViewDemo extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 20,
+  },
+  list: {
+    flex: 1,
+    margin: 10,
+  },
+  header: {
+    flex: 1,
+    padding: 12,
+    fontWeight: 'bold',
+    backgroundColor:'#fff',
   },
   separator: {
     flex: 1,
     height: StyleSheet.hairlineWidth,
     backgroundColor: '#8E8E8E',
   },
+  thick_separator: {
+    flex: 1,
+    height: 3*StyleSheet.hairlineWidth,
+    backgroundColor: '#8E8E8E',
+  },
 });
 
-export default ListViewDemo;
+export default JobView;
 
-AppRegistry.registerComponent('ListViewDemo', () => ListViewDemo);
+AppRegistry.registerComponent('JobView', () => JobView);
