@@ -12,11 +12,11 @@ import { SafeAreaView } from 'react-navigation'
 import { YellowBox } from 'react-native';
 YellowBox.ignoreWarnings(['Remote debugger']);
 
-import Row from './components/Row';
-import Header from './components/Header';
-import SectionHeader from './components/SectionHeader';
-import Footer from './components/Footer';
-import demoData from './data';
+import Row from './Row';
+import Header from './Header';
+import SectionHeader from './SectionHeader';
+import Footer from './Footer';
+import demoData from './SampleData';
 
 
 class JobView extends Component {
